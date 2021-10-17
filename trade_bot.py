@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 import asyncio
 from binance_helpers import binance_client
@@ -26,12 +27,9 @@ def algo(change, threshold, loss_threshold, loss_count, profit_count):
     return should_close_order, loss_count, profit_count
 
 
-async def trend_following_strategy(symbol, threshold, entry, period_in_seconds, quantity, repeat_strategy=False):
-    # Trend-following
-    # if crypto rising by entry% = Buy
-    # exit when profit or loss more than threshold%
-    loss_count = 0
-    profit_count = 0
+async def trend_following_strategy(symbol, threshold, entry, period_in_seconds, quantity, loss_count=0, profit_count=0):
+    """Trend-following: If crypto rising by entry% = Buy. Exit when profit or loss more than threshold%.
+    """
     loss_threshold = threshold * 5
     order = None
     open_position = False
@@ -77,14 +75,32 @@ async def trend_following_strategy(symbol, threshold, entry, period_in_seconds, 
     # close client to prevent errors from unclosed sockets
     await client.close_connection()
 
-    print(f"{profit_count} x profit | {loss_count} x loss")
-    if repeat_strategy and loss_count < 4:
-        await trend_following_strategy(symbol, threshold, entry, period_in_seconds, quantity)
+    return loss_count, profit_count
 
 
 async def main():
-    await trend_following_strategy(symbol=SYMBOL, threshold=0.005, entry=0.001,
-                                   period_in_seconds=60, quantity=0.5, repeat_strategy=True)
+    repeat_strategy = True
+    loss_count = 0
+    profit_count = 0
+    trade_count = 0
+    start = datetime.now()
+    cutoff = datetime.now()
+
+    while repeat_strategy:
+        loss_count, profit_count = await trend_following_strategy(
+            symbol=SYMBOL, threshold=0.005, entry=0.001, period_in_seconds=60, quantity=0.5, loss_count=loss_count,
+            profit_count=profit_count)
+        trade_count += 1
+        print(f"{profit_count} x profit | {loss_count} x loss")
+        if loss_count > 4 or profit_count > 4:
+            repeat_strategy = False
+            cutoff = datetime.now()
+    print(f"""Overall
+Start time: {start}
+Cutoff time: {cutoff}
+Total trades: {trade_count}
+Profitable trades: {profit_count}
+Loss trades: {loss_count}""")
 
 
 if __name__ == "__main__":
