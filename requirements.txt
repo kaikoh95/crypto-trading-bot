@@ -1,0 +1,7 @@
+pandas
+sqlalchemy
+python-binance
+python-dotenv
+asyncio
+certifi
+matplotlib
