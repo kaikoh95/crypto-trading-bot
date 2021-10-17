@@ -17,8 +17,9 @@ async def trend_following_strategy(symbol, threshold, entry, period_in_seconds, 
     # Trend-following
     # if crypto rising by entry% = Buy
     # exit when profit or loss more than threshold%
+    loss_count = 0
     if ENV == "production":
-        input("WARNING: Running this will place REAL orders, press enter/return to continue.")
+        print("WARNING: Running this will place REAL orders.")
     else:
         print("Running this will only place TEST orders.")
     engine = create_engine(symbol)
@@ -47,16 +48,17 @@ async def trend_following_strategy(symbol, threshold, entry, period_in_seconds, 
                 movement = "risen"
                 if last_entry(return_since_buy) <= -threshold:
                     movement = "dropped"
+                    loss_count += 1
                 print(f"Open position has {movement} by {threshold * 100}%, placing SELL order at MARKET price to close position.")
                 if ENV == "production":
-                    order = await client.create_order(symbol=symbol, side="SELL", type="MARKET", quantity=quantity-0.1)
+                    order = await client.create_order(symbol=symbol, side="SELL", type="MARKET", quantity=quantity)
                 else:
-                    order = await client.create_test_order(symbol=symbol, side="SELL", type="MARKET", quantity=quantity-0.1)
+                    order = await client.create_test_order(symbol=symbol, side="SELL", type="MARKET", quantity=quantity)
                 print(order)
                 open_position = False
 
     # repeat strategy
-    if repeat:
+    if repeat and loss_count < 4:
         await trend_following_strategy(symbol, threshold, entry, period_in_seconds, quantity)
 
 
