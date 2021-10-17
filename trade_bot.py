@@ -45,10 +45,12 @@ async def trend_following_strategy(symbol, threshold, entry, period_in_seconds, 
         if len(since_buy) > 1:
             return_since_buy = formula(since_buy)
             if not (-threshold < last_entry(return_since_buy) < threshold):
-                movement = "risen"
                 if last_entry(return_since_buy) <= -threshold:
                     movement = "dropped"
                     loss_count += 1
+                else:
+                    movement = "risen"
+                    loss_count = 0
                 print(f"Open position has {movement} by {threshold * 100}%, placing SELL order at MARKET price to close position.")
                 if ENV == "production":
                     order = await client.create_order(symbol=symbol, side="SELL", type="MARKET", quantity=quantity)
@@ -60,6 +62,9 @@ async def trend_following_strategy(symbol, threshold, entry, period_in_seconds, 
     # repeat strategy
     if repeat and loss_count < 4:
         await trend_following_strategy(symbol, threshold, entry, period_in_seconds, quantity)
+
+    # close client
+    await client.close_connection()
 
 
 async def main():
