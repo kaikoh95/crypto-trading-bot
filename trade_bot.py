@@ -27,10 +27,9 @@ def algo(change, threshold, loss_threshold, loss_count, profit_count):
     return should_close_order, loss_count, profit_count
 
 
-async def trend_following_strategy(symbol, threshold, entry, period_in_seconds, quantity, loss_count=0, profit_count=0):
+async def trend_following_strategy(symbol, threshold, loss_threshold, entry, period_in_seconds, quantity, loss_count=0, profit_count=0):
     """Trend-following: If crypto rising by entry% = Buy. Exit when profit or loss more than threshold%.
     """
-    loss_threshold = threshold * 5
     order = None
     open_position = False
 
@@ -88,8 +87,8 @@ async def main():
 
     while repeat_strategy:
         loss_count, profit_count = await trend_following_strategy(
-            symbol=SYMBOL, threshold=0.005, entry=0.001, period_in_seconds=60, quantity=0.5, loss_count=loss_count,
-            profit_count=profit_count)
+            symbol=SYMBOL, threshold=0.05, loss_threshold=0.01, entry=0.005, period_in_seconds=60, quantity=0.5,
+            loss_count=loss_count, profit_count=profit_count)
         trade_count += 1
         print(f"{profit_count} x profit | {loss_count} x loss")
         if loss_count > 4 or profit_count > 4:
