@@ -39,6 +39,7 @@ $ python read_db.py --graph
 ```
 
 ### Executing the trade bot
+Please let the asyncio_run_ticker.py script run for a few minutes first before initialising this script.
 WARNING: Please check that you have set the correct ENV in .env file before running the following.
 ```
 $ python trade_bot.py
