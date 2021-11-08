@@ -12,12 +12,12 @@ def init_client():
 
 async def main():
     client = init_client()
-    ticker = "KCS-USDT"
-    amount = "22"  # "571.14288989"
-    price = "20"  # "0.035"
-    increment = 1.0  # 0.1
+
+    ticker = "CERE-USDT"
+    amount = "571.14288989"
+    price = "0.035"
+    increment = 0.1
     qty = f"{float(amount) / float(price):.3f}"
-    attempt = 0
 
     time = datetime.strptime("2021-11-08 21:05:15", "%Y-%m-%d %H:%M:%S")
     while time > datetime.now():
@@ -25,6 +25,7 @@ async def main():
     print("start buy attempt", datetime.now())
 
     buy_order_id = None
+    attempt = 0
     while buy_order_id is None and attempt < 3:
         try:
             buy_order_id = client.create_limit_order(ticker, "buy", qty, price).get("orderId")
