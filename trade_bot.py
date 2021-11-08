@@ -87,11 +87,11 @@ async def main():
 
     while repeat_strategy:
         loss_count, profit_count = await trend_following_strategy(
-            symbol=SYMBOL, threshold=0.05, loss_threshold=0.01, entry=0.005, period_in_seconds=60, quantity=0.5,
+            symbol=SYMBOL, threshold=0.005, loss_threshold=0.025, entry=0.001, period_in_seconds=60, quantity=0.001,
             loss_count=loss_count, profit_count=profit_count)
         trade_count += 1
         print(f"{profit_count} x profit | {loss_count} x loss")
-        if loss_count > 4 or profit_count > 4:
+        if loss_count > 1 or profit_count > 10:
             repeat_strategy = False
             cutoff = datetime.now()
     print(f"""Overall

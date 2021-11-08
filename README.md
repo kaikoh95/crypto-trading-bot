@@ -44,3 +44,9 @@ WARNING: Please check that you have set the correct ENV in .env file before runn
 ```
 $ python trade_bot.py
 ```
+
+### Executing the KuCoin bot to snag first listings
+WARNING: Please check that you have set the correct ENV in .env file before running the following.
+```
+$ python kucoin_api_wrapper.py
+```
