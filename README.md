@@ -58,5 +58,5 @@ This was made from scratch using KuCoin's Python SDK.
 ### Executing the KuCoin bot to snag first listings
 WARNING: Please check that you have set the correct ENV in .env file before running the following.
 ```
-$ python kucoin_api_wrapper.py
+$ python kucoin_first_trade.py
 ```

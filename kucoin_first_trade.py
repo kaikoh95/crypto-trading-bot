@@ -15,14 +15,14 @@ async def main():
 
     ticker = "CERE-USDT"
     amount = "571.14288989"
-    price = "0.035"
+    price = "0.1"
     increment = 0.1
     qty = f"{float(amount) / float(price):.3f}"
 
     time = datetime.strptime("2021-11-08 21:05:15", "%Y-%m-%d %H:%M:%S")
     while time > datetime.now():
         print("waiting for time")
-    print("start buy attempt", datetime.now())
+    print("start buy attempt", datetime.now(), ticker, price, qty)
 
     buy_order_id = None
     attempt = 0
@@ -40,17 +40,19 @@ async def main():
         except Exception as e:
             buy_order_id = None
             print(str(e))
-            price = f"{float(price) + increment:.3f}"
-            qty = f"{float(amount) // float(price)}"
-            print("buy price refinement", price, qty, ticker)
             attempt += 1
-            print("retry buy", datetime.now())
+            if attempt < 3:
+                price = f"{float(price) + increment:.3f}"
+                qty = f"{float(amount) // float(price)}"
+                print("buy price refinement", price, qty, ticker)
+                print("retry buy", datetime.now())
     print("buy_order_id", buy_order_id)
     print(3, datetime.now())
 
     price = f"{float(price) * 8}"
     sell_order_id = None
     attempt = 0
+    print("start sell attempt", datetime.now(), ticker, price, qty)
     while sell_order_id is None and buy_order_id is not None and attempt < 3:
         try:
             sell_order_id = client.create_limit_order(ticker, "sell", qty, price).get("orderId")
@@ -65,10 +67,11 @@ async def main():
         except Exception as e:
             sell_order_id = None
             print(str(e))
-            price = f"{float(price) - increment:.3f}"
-            print("sell price refinement", price, qty, ticker)
             attempt += 1
-            print("retry buy", datetime.now())
+            if attempt < 3:
+                price = f"{float(price) - increment:.3f}"
+                print("sell price refinement", price, qty, ticker)
+                print("retry buy", datetime.now())
     print("sell_order_id", sell_order_id)
     print(4, datetime.now())
 
