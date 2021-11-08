@@ -1,5 +1,12 @@
 # crypto-trading-bot
-Automated crypto trading bot as adapted from [Algovibes](https://www.youtube.com/watch?v=rc_Y6rdBqXM&amp;t=451s&amp;ab_channel=Algovibes).
+
+### Features
+1. Binance Bot
+2. KuCoin Bot
+
+
+## Binance Bot
+This is as adapted from [Algovibes](https://www.youtube.com/watch?v=rc_Y6rdBqXM&amp;t=451s&amp;ab_channel=Algovibes).
 
 ### Pre-requisites
 Ensure that you have created a [Binance API key](https://www.binance.com/en/my/settings/api-management) before proceeding.
@@ -44,6 +51,9 @@ WARNING: Please check that you have set the correct ENV in .env file before runn
 ```
 $ python trade_bot.py
 ```
+
+## KuCoin Bot
+This was made from scratch using KuCoin's Python SDK.
 
 ### Executing the KuCoin bot to snag first listings
 WARNING: Please check that you have set the correct ENV in .env file before running the following.
