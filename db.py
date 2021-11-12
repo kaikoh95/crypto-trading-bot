@@ -10,7 +10,11 @@ def create_engine(symbol):
 
 
 def fetch_dataframe(symbol, engine):
-    return pd.read_sql(symbol, engine)
+    try:
+        return pd.read_sql(symbol, engine)
+    except Exception as e:
+        print(f'Exception: {e}')
+    return None
 
 
 def plot_stats(symbol, dataframe, y_axis="Price", x_axis="Time"):

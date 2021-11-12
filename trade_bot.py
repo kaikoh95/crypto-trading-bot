@@ -44,6 +44,8 @@ async def trend_following_strategy(symbol, threshold, loss_threshold, entry, per
     print(f"Awaiting {symbol} to rise by {entry * 100}%")
     while not open_position:
         df = fetch_dataframe(symbol, engine)
+        if df is None:
+            break
         period = df.iloc[-period_in_seconds:]
         cumulative_return = formula(period)
         if last_entry(cumulative_return) > entry:
@@ -58,6 +60,8 @@ async def trend_following_strategy(symbol, threshold, loss_threshold, entry, per
     print(f"Awaiting position for {symbol} to rise by {threshold * 100}% or drop by {loss_threshold * 100}%.")
     while open_position and order is not None:
         df = fetch_dataframe(symbol, engine)
+        if df is None:
+            break
         since_buy = df.loc[df.Time > pd.to_datetime(order["transactTime"], unit="ms")]
         if len(since_buy) > 1:
             return_since_buy = formula(since_buy)
