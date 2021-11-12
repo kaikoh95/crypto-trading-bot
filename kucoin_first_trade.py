@@ -13,21 +13,22 @@ def init_client():
 async def main():
     client = init_client()
 
-    ticker = "CERE-USDT"
-    amount = "571.14288989"
-    price = "0.1"
-    increment = 0.1
-    qty = f"{float(amount) / float(price):.3f}"
+    ticker = "XTM-USDT"
+    amount = "14.07"
+    price = "2"
+    increment = 0.005
+    qty = f"{float(amount) / float(price):.1f}"
 
-    time = datetime.strptime("2021-11-08 21:05:15", "%Y-%m-%d %H:%M:%S")
+    time = datetime.strptime("2021-11-09 23:50:15", "%Y-%m-%d %H:%M:%S")
     while time > datetime.now():
-        print("waiting for time")
+        print("waiting for time", datetime.now())
     print("start buy attempt", datetime.now(), ticker, price, qty)
 
     buy_order_id = None
     attempt = 0
     while buy_order_id is None and attempt < 3:
         try:
+            print(price)
             buy_order_id = client.create_limit_order(ticker, "buy", qty, price).get("orderId")
             print("buy order placed", datetime.now())
             print("buy order placed", price, qty, ticker)
@@ -40,16 +41,20 @@ async def main():
         except Exception as e:
             buy_order_id = None
             print(str(e))
-            attempt += 1
-            if attempt < 3:
-                price = f"{float(price) + increment:.3f}"
-                qty = f"{float(amount) // float(price)}"
+            if "symbolNotAvailable" not in str(e) and "forbidden to" not in str(e):
+                attempt += 1
+                if attempt < 3:
+                    price = f"{float(price) + increment:.3f}"
+                    qty = f"{float(amount) // float(price)}"
+                    print("buy price refinement", price, qty, ticker)
+                    print("retry buy", datetime.now())
+            else:
                 print("buy price refinement", price, qty, ticker)
-                print("retry buy", datetime.now())
+                print("retry 2buy", datetime.now())
     print("buy_order_id", buy_order_id)
     print(3, datetime.now())
 
-    price = f"{float(price) * 8}"
+    price = f"0.95"
     sell_order_id = None
     attempt = 0
     print("start sell attempt", datetime.now(), ticker, price, qty)
